@@ -1,0 +1,18 @@
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Developer Artifacts
+.claudedata/
+.gemini/
+artifacts/
+scratch/
+
+# Performance Logs
+*.log
+npm-debug.log*
+
+# Deployments
+.vercel
+dist
+build

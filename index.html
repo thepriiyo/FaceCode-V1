@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FaceCode V1 | Visual Synthesizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- CINEMATIC FILTERS -->
+        <div class="crt-overlay"></div>
+        <div class="vignette"></div>
+
+        <!-- ASCII BACKGROUND ENGINE -->
+        <canvas id="ascii-output"></canvas>
+
+        <!-- NEON HUD TOP LEFT -->
+        <div class="hud-panel hud-top-left">
+            <div class="header-main">
+                <button id="btn-menu" class="btn-icon">⚡</button>
+                <div class="brand">FaceCode_V1</div>
+            </div>
+        </div>
+
+        <!-- NEON HUD TOP RIGHT -->
+        <div class="hud-panel hud-top-right">
+            <div id="fps-counter">--</div>
+            <div class="logic-log"><span style="color:#ff0044; font-weight:bold;">⚠️ PHOTOSENSITIVITY_ADVISORY</span></div>
+            <div id="logic-log" class="logic-log">KINETIC_BOOST_ONLINE</div>
+        </div>
+
+        <!-- THE SYNTHESIZER DASHBOARD (LEFT DRAWER - MOBILE RESPONSIVE) -->
+        <div id="synth-dashboard" class="hud-panel hud-left-drawer">
+            <div class="drawer-header">
+                VISUAL_SYNTHESIZER
+                <button id="btn-close-menu" class="btn-close">×</button>
+            </div>
+            
+            <div class="synth-group">
+                <div class="synth-label">CHROMATIC_SHIFT <span id="val-shift">0.0</span></div>
+                <input type="range" id="slider-shift" min="0" max="25" value="0" step="1">
+            </div>
+
+            <div class="synth-group">
+                <div class="synth-label">GHOST_TRAILS <span id="val-trails">0.0</span></div>
+                <input type="range" id="slider-trails" min="0" max="0.99" value="0" step="0.01">
+            </div>
+
+            <div class="synth-group">
+                <div class="synth-label">KALEIDOSCOPE <span id="val-kaleido">1</span></div>
+                <input type="range" id="slider-kaleido" min="1" max="12" value="1" step="1">
+            </div>
+
+            <div class="synth-group">
+                <div class="synth-label">GLITCH_ENTROPY <span id="val-glitch">0.0</span></div>
+                <input type="range" id="slider-glitch" min="0" max="1" value="0.2" step="0.01">
+            </div>
+
+            <div class="synth-group">
+                <div class="synth-label">AUDIO_INJECTION <span id="val-audio">1.5</span></div>
+                <input type="range" id="slider-audio" min="0" max="4" value="1.5" step="0.1">
+            </div>
+
+            <div class="legal-links" style="margin-top:auto; font-size:10px; opacity:0.6;">
+                <a href="PRIVACY.md" style="color:var(--accent); text-decoration:none;">PRIVACY_POLICY</a> | 
+                <a href="LICENSE" style="color:var(--accent); text-decoration:none;">MIT_LICENSE</a>
+            </div>
+        </div>
+
+        <!-- MAIN OPERATOR HUD -->
+        <div class="hud-panel hud-bottom-center">
+            <div class="controls-main">
+                <div class="btn-group-primary" style="display:flex; flex-direction:column; gap:8px;">
+                    <button id="btn-camera" class="btn-primary">START_CAMERA</button>
+                    <!-- TRUST SHIELD (v9.9) -->
+                    <div style="font-size:8px; opacity:0.6; text-align:center; letter-spacing:1px;">
+                        [ LOCKED_LOCAL: NO_DATA_STORAGE_OR_TRANSMISSION ]
+                    </div>
+                </div>
+
+                <div class="mode-switcher">
+                    <button class="btn-mode" data-mode="neon">NEON</button>
+                    <button class="btn-mode" data-mode="ascii">ASCII</button>
+                    <button class="btn-mode" data-mode="audio">AUDIO</button>
+                    <button class="btn-mode active" data-mode="chroma">CHROMA</button>
+                </div>
+
+                <div class="filter-switcher">
+                    <button class="btn-filter active" data-filter="0">PURE</button>
+                    <button class="btn-filter" data-filter="1">RETRO</button>
+                    <button class="btn-filter" data-filter="2">GLITCH</button>
+                </div>
+            </div>
+
+            <div class="controls-sub">
+                <div class="slider-group">
+                    <label>OPTIC_RES</label>
+                    <input type="range" id="res-slider" min="20" max="400" value="120">
+                </div>
+                <div class="sub-actions">
+                    <button id="btn-export" class="btn-secondary">SNAPSHOT</button>
+                    <button id="btn-record" class="btn-secondary">RECORD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HIDDEN PROCESSING LAYERS -->
+        <video id="v-input" autoplay playsinline muted></video>
+        <canvas id="c-buffer" style="display:none"></canvas>
+    </div>
+
+    <script src="js/engine.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/shaders.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
