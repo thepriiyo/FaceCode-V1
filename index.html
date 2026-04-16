@@ -24,26 +24,28 @@
         <!-- ASCII BACKGROUND ENGINE -->
         <canvas id="ascii-output"></canvas>
 
-        <!-- NEON HUD TOP LEFT -->
+        <!-- v1.3 BALANCED WING HUD -->
+        <!-- LEFT: MENU -->
         <div class="hud-panel hud-top-left">
-            <div class="header-main">
-                <div class="menu-container">
-                    <button id="btn-menu" class="btn-icon btn-pulse">⚡</button>
-                    <!-- v1.2 DISCOVERY HINT -->
-                    <div id="synth-hint" class="synth-hint">VISUAL_SYNTH</div>
-                </div>
-                <div class="brand">FaceCode_V1</div>
+            <div class="menu-container">
+                <button id="btn-menu" class="btn-icon btn-pulse">⚡</button>
+                <div id="synth-hint" class="synth-hint">VISUAL_SYNTH</div>
             </div>
         </div>
 
-        <!-- NEON HUD TOP RIGHT -->
+        <!-- CENTER: BRANDING -->
+        <div class="hud-panel hud-top-center">
+            <div class="brand">FaceCode_V1</div>
+        </div>
+
+        <!-- RIGHT: PERFORMANCE -->
         <div class="hud-panel hud-top-right">
             <div id="fps-counter">--</div>
-            <div class="logic-log"><span style="color:#ff0044; font-weight:bold;">⚠️ PHOTOSENSITIVITY_ADVISORY</span></div>
+            <div class="logic-log"><span style="color:#ff0044; font-weight:bold;">⚠️ PHOTOSENSITIVITY</span></div>
             <div id="logic-log" class="logic-log">KINETIC_BOOST_ONLINE</div>
         </div>
 
-        <!-- THE SYNTHESIZER DASHBOARD (LEFT DRAWER - MOBILE RESPONSIVE) -->
+        <!-- THE SYNTHESIZER DASHBOARD (LEFT DRAWER) -->
         <div id="synth-dashboard" class="hud-panel hud-left-drawer">
             <div class="drawer-header">
                 VISUAL_SYNTHESIZER
@@ -76,19 +78,18 @@
             </div>
 
             <div class="legal-links" style="margin-top:auto; font-size:10px; opacity:0.6;">
-                <a href="PRIVACY.md" style="color:var(--accent); text-decoration:none;">PRIVACY_POLICY</a> | 
-                <a href="LICENSE" style="color:var(--accent); text-decoration:none;">MIT_LICENSE</a>
+                <a href="PRIVACY.md" style="color:var(--accent); text-decoration:none;">PRIVACY</a> | 
+                <a href="LICENSE" style="color:var(--accent); text-decoration:none;">LICENSE</a>
             </div>
         </div>
 
         <!-- MAIN OPERATOR HUD -->
         <div class="hud-panel hud-bottom-center">
             <div class="controls-main">
-                <div class="btn-group-primary" style="display:flex; flex-direction:column; gap:8px;">
+                <div class="btn-group-primary" style="display:flex; flex-direction:column; gap:6px;">
                     <button id="btn-camera" class="btn-primary">START_CAMERA</button>
-                    <!-- TRUST SHIELD (v9.9) -->
                     <div style="font-size:8px; opacity:0.6; text-align:center; letter-spacing:1px;">
-                        [ LOCKED_LOCAL: NO_DATA_STORAGE_OR_TRANSMISSION ]
+                        [ LOCKED_LOCAL: NO_STORAGE ]
                     </div>
                 </div>
 
@@ -112,8 +113,8 @@
                     <input type="range" id="res-slider" min="20" max="400" value="120">
                 </div>
                 <div class="sub-actions">
-                    <button id="btn-export" class="btn-secondary">SNAPSHOT</button>
-                    <button id="btn-record" class="btn-secondary">RECORD</button>
+                    <button id="btn-export" class="btn-secondary">SNAP</button>
+                    <button id="btn-record" class="btn-secondary">REC</button>
                 </div>
             </div>
         </div>

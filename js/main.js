@@ -54,11 +54,14 @@ class SignalApp {
     }
 
     setupResizeHandler() {
-        window.addEventListener('resize', () => {
-            clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = setTimeout(() => this.handleResize(), 150);
-        });
-        this.handleResize();
+        const resizeStage = () => {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            this.handleResize();
+        };
+        window.addEventListener('resize', resizeStage);
+        window.addEventListener('orientationchange', () => setTimeout(resizeStage, 100));
+        resizeStage();
     }
 
     handleResize() {
