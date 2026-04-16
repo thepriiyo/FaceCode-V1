@@ -87,7 +87,15 @@ class SignalApp {
     init() {
         document.getElementById('btn-camera').addEventListener('click', () => this.toggleCamera());
         const menuBtn = document.getElementById('btn-menu');
-        menuBtn.addEventListener('click', (e) => { e.stopPropagation(); this.synthDrawer.classList.toggle('active'); });
+        const synthHint = document.getElementById('synth-hint');
+        
+        menuBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            this.synthDrawer.classList.toggle('active'); 
+            // v1.2 DISMISS HINTS
+            menuBtn.classList.remove('btn-pulse');
+            if (synthHint) synthHint.remove();
+        });
         document.getElementById('btn-close-menu').addEventListener('click', () => { this.synthDrawer.classList.remove('active'); });
         document.addEventListener('click', (e) => { if (!this.synthDrawer.contains(e.target) && e.target !== menuBtn) this.synthDrawer.classList.remove('active'); });
 
