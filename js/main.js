@@ -1,6 +1,6 @@
 /**
- * SIGNAL v9.7 THE SYNTHESIZER (KINETIC BOOST)
- * Violent Audio-Reactivity & Extended Resolution Range
+ * FACECODE v1.1 STABILIZATION (DRAG & DROP)
+ * High-Performance Touch & Mouse Draggable Mirror
  */
 
 class SignalApp {
@@ -16,7 +16,7 @@ class SignalApp {
         this.exporter = new window.ExportSystem();
         this.settings = new window.SettingsManager();
         
-        this.synth = { rgbShift: 0, trails: 0, kaleidoscope: 1, glitch: 0.2, audioGain: 1.5 }; // Boosted default gain
+        this.synth = { rgbShift: 0, trails: 0, kaleidoscope: 1, glitch: 0.2, audioGain: 1.5 };
         this.worker = null;
         this.isStreaming = false;
         this.useWorker = false;
@@ -27,11 +27,13 @@ class SignalApp {
         this.lastTime = 0; this.frameCount = 0; this.hasIgnited = false;
         this.charAspect = 0.6; this.offsetX = 0; this.offsetY = 0; this.gridWidth = 120; this.gridHeight = 60;
 
+        // DRAG STATE
+        this.dragState = { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 };
+
         this.init();
         this.applySavedSettings();
-        this.handleResize();
-        
-        console.log("FACECODE_V1_DEFINITIVE_IGNITION");
+        this.initWorker();
+        this.setupResizeHandler();
     }
 
     logStatus(status) { if (this.logicLog) this.logicLog.innerText = status.toUpperCase(); }
@@ -102,6 +104,45 @@ class SignalApp {
              recBtn.classList.toggle('rec-active', state === "STOP_RECORD");
         });
 
+        // v1.1 DRAGGABLE MIRROR LOGIC
+        const startDrag = (e) => {
+            this.dragState.isDragging = true;
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            this.dragState.startX = clientX;
+            this.dragState.startY = clientY;
+            const rect = this.video.getBoundingClientRect();
+            this.dragState.initialX = rect.left;
+            this.dragState.initialY = rect.top;
+            this.video.style.transition = 'none'; // Disable transition for smooth drag
+        };
+
+        const doDrag = (e) => {
+            if (!this.dragState.isDragging) return;
+            e.preventDefault();
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            const dx = clientX - this.dragState.startX;
+            const dy = clientY - this.dragState.startY;
+            this.video.style.left = `${this.dragState.initialX + dx}px`;
+            this.video.style.top = `${this.dragState.initialY + dy}px`;
+            this.video.style.bottom = 'auto'; // Break the CSS lock
+            this.video.style.right = 'auto';
+        };
+
+        const endDrag = () => {
+            this.dragState.isDragging = false;
+            this.video.style.transition = 'all 0.4s cubic-bezier(0.19, 1, 0.22, 1)'; // Restore smooth lock
+        };
+
+        this.video.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', doDrag);
+        window.addEventListener('mouseup', endDrag);
+
+        this.video.addEventListener('touchstart', startDrag);
+        window.addEventListener('touchmove', doDrag, { passive: false });
+        window.addEventListener('touchend', endDrag);
+
         const binders = [
             { id: 'slider-shift', prop: 'rgbShift', label: 'val-shift' },
             { id: 'slider-trails', prop: 'trails', label: 'val-trails' },
@@ -126,25 +167,18 @@ class SignalApp {
             btn.addEventListener('click', (e) => { this.filterMode = parseFloat(e.target.dataset.filter); this.syncUI(); this.persist(); });
         });
 
-        // RESOLUTION SLIDER TRIGGER (v9.7 FIXED)
-        document.getElementById('res-slider').addEventListener('input', (e) => { 
-            this.resolution = parseInt(e.target.value); 
-            this.handleResize(); // Immediate Resize
-            this.persist(); 
-        });
+        document.getElementById('res-slider').addEventListener('input', (e) => { this.resolution = parseInt(e.target.value); this.handleResize(); this.persist(); });
     }
 
     syncUI() {
         document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === this.mode));
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.toggle('active', parseFloat(btn.dataset.filter) === this.filterMode));
-        
         document.getElementById('slider-shift').value = this.synth.rgbShift;
         document.getElementById('slider-trails').value = this.synth.trails;
         document.getElementById('slider-kaleido').value = this.synth.kaleidoscope;
         document.getElementById('slider-glitch').value = this.synth.glitch;
         document.getElementById('slider-audio').value = this.synth.audioGain;
         document.getElementById('res-slider').value = this.resolution;
-
         document.getElementById('val-shift').innerText = this.synth.rgbShift.toFixed(2);
         document.getElementById('val-trails').innerText = this.synth.trails.toFixed(2);
         document.getElementById('val-kaleido').innerText = this.synth.kaleidoscope.toFixed(0);
@@ -201,9 +235,7 @@ class SignalApp {
 
     async renderCPU(t) {
         const af = (this.audio.getVolume() || 0) * this.synth.audioGain;
-        // KINETIC SCALE LOGIC (v9.7 FIXED)
         const pulse = 1.0 + (af * 0.4); 
-        
         const cv = this.offscreen || this.outputCanvas; const ctx = cv.getContext('2d');
         const W = cv.width; const H = cv.height;
         if (this.synth.trails > 0) { ctx.fillStyle = `rgba(0,0,0,${1-this.synth.trails})`; ctx.fillRect(0,0,W,H); }
@@ -214,13 +246,8 @@ class SignalApp {
         const iD = bCtx.getImageData(0,0,buf.width,buf.height); const px = iD.data;
         const ascii = this.cpuEngine.process(px, buf.width, buf.height, af, this.filterMode === 1);
         const lines = ascii.split('\n'); const cW = W / buf.width; const cH = cW / this.charAspect;
-        
         ctx.save();
-        // PULSE JUMP (v9.7 FIXED)
-        ctx.translate(W/2, H/2);
-        ctx.scale(pulse, pulse);
-        ctx.translate(-W/2, -H/2);
-        
+        ctx.translate(W/2, H/2); ctx.scale(pulse, pulse); ctx.translate(-W/2, -H/2);
         ctx.font = `bold ${cW/this.charAspect}px "JetBrains Mono", monospace`; ctx.textAlign = 'center';
         const shift = this.synth.rgbShift;
         for (let r=0; r<lines.length; r++) {
@@ -229,7 +256,6 @@ class SignalApp {
                 const char = l[c]; if (char === ' ') continue;
                 const i = (r*buf.width+c)*4;
                 let rC = px[i], gC = px[i+1], bC = px[i+2];
-                // KINETIC BRIGHTNESS JUMP (v9.7 RESTORED)
                 const boost = 1.0 + af * 1.5;
                 if (this.mode === 'neon') { rC = 0; gC = 255; bC = 0; }
                 else if (this.mode === 'ascii') { const lum = (rC+gC+bC)/3; rC=lum; gC=lum; bC=lum; }
